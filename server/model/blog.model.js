@@ -1,10 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
 const blogSchema = new mongoose.Schema({
-    BlogId:{
-        type:mongoose.Schema.Types.ObjectId,
-        auto:true
-    },
     BlogTitle:{
         type:String,
         required:true,
@@ -17,11 +13,19 @@ const blogSchema = new mongoose.Schema({
     BlogImage:{
         type:String,
     },
+    BlogImagePath:{
+        type:String,
+    },
     CreatedBy:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
         required:true,
     },
+    UploadedAt:{
+        type:Date,
+        default:Date.now,
+    }
+    ,
     LikedBy:[
         {
             type: mongoose.Schema.Types.ObjectId,

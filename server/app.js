@@ -4,7 +4,8 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import dotenv from "dotenv";
 import authRouter from "./routes/auth.route.js";
-
+import blogRoute from "./routes/blog.route.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 dotenv.config();
@@ -15,6 +16,7 @@ const secretKey = process.env.SECRETKEY;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+app.use(cookieParser());
 app.use(
     session({
         secret:'secretKey',
@@ -32,5 +34,6 @@ app.use(
 )
 
 app.use('/authentication',authRouter);
+app.use('/blog',blogRoute);
 
 export default app;

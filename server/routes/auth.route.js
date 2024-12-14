@@ -4,7 +4,7 @@ import { loginController, logoutController, signupController } from "../controll
 const authRouter = Router();
 
 authRouter.route('/login').post(loginController);
-authRouter.route('/signUp').post(signupController);
+authRouter.route('/signup').post(signupController);
 authRouter.route('/logOut').post(logoutController);
 
 export default authRouter;
