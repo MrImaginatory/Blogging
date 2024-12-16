@@ -1,4 +1,7 @@
-// const secretKey = process.env.SECRETKEY;
+import dotenv from "dotenv"
+
+dotenv.config();
+
 import jwt from "jsonwebtoken"
 
 const verifyJwt = async(req,res,next) =>{
@@ -9,7 +12,7 @@ const verifyJwt = async(req,res,next) =>{
     }
 
     try {
-        const decodedToken = jwt.verify(token,'testKey');
+        const decodedToken = jwt.verify(token,process.env.JWT_SECRET_KEY);
         req.user = decodedToken;
         next();
     } catch (error) {

@@ -1,9 +1,12 @@
 import Router from "express";
-import { createBlogController } from "../controllers/blog.controller.js";
-import verifyJwt from "../middleware/verify.middle.js";
+import { createBlogController, deleteBlogController, updateBlogController, allBlogController } from "../controllers/blog.controller.js";
+import upload from "../middleware/multer.middle.js"
 
 const blogRoute = Router();
 
-blogRoute.route('/create').post(verifyJwt,createBlogController);
+blogRoute.route('/create').post(upload.single('filename'),createBlogController);
+blogRoute.route('/update/:id').post(upload.single('filename'),updateBlogController);
+blogRoute.route('/delete/:id').delete(deleteBlogController);
+blogRoute.route('/allBlogs').get(allBlogController);
 
 export default blogRoute;

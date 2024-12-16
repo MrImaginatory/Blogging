@@ -1,5 +1,6 @@
 import app from "./app.js";
 import connectDB from "./database/db.js";
+import fs from "fs"
 
 const ServerPort = process.env.PORT;
 
@@ -12,3 +13,7 @@ connectDB()
     .catch((error)=>{
         console.error('Error in indexJs:',error);
     })
+
+    if(!fs.existsSync('./uploads')){
+        fs.mkdirSync('./uploads');
+    }

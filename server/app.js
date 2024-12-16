@@ -6,12 +6,13 @@ import dotenv from "dotenv";
 import authRouter from "./routes/auth.route.js";
 import blogRoute from "./routes/blog.route.js";
 import cookieParser from "cookie-parser";
+import verifyJwt from "./middleware/verify.middle.js";
 
 const app = express();
 dotenv.config();
 
-const MongoUri = process.env.MONGOURI;
-const secretKey = process.env.SECRETKEY;
+const MongoUri = process.env.MONGO_URI;
+const secretKey = process.env.SECRET_KEY;
 
 app.use(cors());
 app.use(express.json());
@@ -34,6 +35,6 @@ app.use(
 )
 
 app.use('/authentication',authRouter);
-app.use('/blog',blogRoute);
+app.use('/blog',verifyJwt,blogRoute);
 
 export default app;
