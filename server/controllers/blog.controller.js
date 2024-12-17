@@ -5,9 +5,14 @@ const createBlogController = async(req,res) =>{
     try {
         const {Title,Description} = req.body;
         const userId = req.user?.userid;
+        const isVerified = req.user?.isVerified;
 
         if(!userId){
             return res.json(401).json({message:"Unauthorized User"})
+        }
+
+        if(!isVerified){
+            return res.json(401).json({message:"UnVerified User Please Complete Verification First"})
         }
 
         let filename ="";
@@ -49,6 +54,17 @@ const updateBlogController = async(req,res) =>{
     try {
         const {id} = req.params.id;
         const {Title,Description} = req.body;
+        const userId = req.user?.userid;
+        const isVerified = req.user?.isVerified;
+
+        if(!userId){
+            return res.json(401).json({message:"Unauthorized User"})
+        }
+
+        if(!isVerified){
+            return res.json(401).json({message:"UnVerified User Please Complete Verification First"})
+        }
+
         let filename="";
         let imagePath="";
 
@@ -68,6 +84,12 @@ const updateBlogController = async(req,res) =>{
             BlogImagePath:imagePath
         })
 
+        const findBlog = await Blog.findById(id);
+
+        if(userId!==findBlog.CreatedBy.toString()){
+            return res.status(401).json({message:"You are Unauthorized to update this Blog"});
+        }
+
         const updatedBlog = await Blog.findByIdAndUpdate(id,newBlog,{new:true});
 
         if(!updatedBlog){
@@ -86,9 +108,14 @@ const deleteBlogController = async(req,res) =>{
     try {
         const blogId = req.params.id;
         const userId = req.user?.userid;
+        const isVerified = req.user?.isVerified;
 
         if(!userId){
             return res.status(401).json({message:"Unauthorized Login First!"});
+        }
+
+        if(!isVerified){
+            return res.json(401).json({message:"UnVerified User Please Complete Verification First"})
         }
 
         const blog = await Blog.findById(blogId);

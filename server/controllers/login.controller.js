@@ -1,6 +1,8 @@
 import User from "../model/user.model.js";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import nodemailer from "nodemailer"
+import transporter from "../utils/nodemailer.util.js";
 
 const loginController = async(req,res) => {
     try{
@@ -16,7 +18,7 @@ const loginController = async(req,res) => {
             res.status(400).json({message:"Invalid Email or Password!"})
         }
 
-        const token = jwt.sign({userid:user._id,email:user.emailId},process.env.JWT_SECRET_KEY,{expiresIn:"1h"});
+        const token = jwt.sign({userid:user._id,email:user.emailId,isVerified:user.isVerified},process.env.JWT_SECRET_KEY,{expiresIn:"1h"});
 
         res.cookie("jwtToken", token, {
                                     httpOnly: true,
@@ -53,7 +55,25 @@ const signupController = async(req,res) => {
         const newUser = new User(userData);
         await newUser.save();
 
-        res.status(201).json({message:"user Created Successfully"})
+        if(!newUser||newUser.length===0){
+            return res.status(401).json({message:"Error Creating User"})
+        }
+
+        const verifyEmailURL = `http://localhost:3001/authentication/verify/${newUser._id}`;
+        const verifyEmailInfo = await transporter.sendMail({
+            from:process.env.EMAIL_FROM,
+            to:newUser.emailId,
+            subject:'Verification Related Email',
+            html:`<h1>Please Verify Your Account by clicking the Link</h1>
+                    <a href='${verifyEmailURL}'>${verifyEmailURL}</a>
+                `,
+        })
+
+        if(!verifyEmailInfo.response.includes('250')||!info.response.includes('OK')){
+            return res.status(401).json({message:"Error Creating User!"});
+        }
+
+        return res.status(201).json({message:"user Created Successfully Please Verify Yourself through Email!"});
 
     } catch (error) {
         console.log("Error in signupController:",error);
@@ -75,4 +95,32 @@ const logoutController  = async(req,res) => {
     }
 }
 
-export {loginController,signupController,logoutController}
+const verifyController = async(req,res)=>{
+    try {
+        const {id} = req.params.id;
+
+        const userData = await User.findById(id);
+
+        if(!userData || userData.length){
+            return res.status(404).json({message:"User Not Found!"});
+        }
+
+        if(userData.isVerified){
+            return res.status(301).json({message:"User Already Verified. Redirecting user"});
+        }
+
+        const verifyUser = await User.findByIdAndUpdate(id,{isVerified:true},{new:true});
+
+        if(!verifyUser||verifyUser.length===0){
+            return res.status(401).json({message:"Error verifying user try later"});
+        }
+
+        return res.status(200).json({message:"User Verified Successfully"});
+
+    } catch (error) {
+        console.log("Error verifying User");
+        return res.status(401).json({message:"Error verifying user try later"});
+    }
+}
+
+export {loginController,signupController,logoutController,verifyController}

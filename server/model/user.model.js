@@ -26,7 +26,16 @@ const userSchema = new mongoose.Schema({
     follows:[{
             type:mongoose.Schema.Types.ObjectId,
             ref:'User'
-        }]
+    }],
+    isVerified:{
+        type:Boolean,
+        default:false,
+        required:true,
+    },
+    gender:{
+        type:String,
+        enum:["Male","Female","Others"],
+    }
 })
 
 export default mongoose.model("User",userSchema);
