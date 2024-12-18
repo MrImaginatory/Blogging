@@ -1,4 +1,4 @@
-export const verificationEmail = (userName, verifyLink) => {
+const verificationEmail = (userName, verifyLink) => {
     return `
         <head>
             <meta charset="UTF-8">
@@ -67,3 +67,5 @@ export const verificationEmail = (userName, verifyLink) => {
         </body>
     `;
 };
+
+export default verificationEmail;

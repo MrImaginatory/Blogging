@@ -2,7 +2,7 @@ import User from "../model/user.model.js";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import transporter from "../utils/nodemailer.util.js";
-import { verificationEmail } from "./emailTemplates/verificationEmail.js";
+import verificationEmail from "../emailTemplates/verifyTemplate.js";
 
 const loginController = async(req,res) => {
     try{
@@ -30,7 +30,7 @@ const loginController = async(req,res) => {
 
     }catch(error){
         console.log("Error in LoginController:",error);
-        res.status(400).json({message:"Error logging In"});
+        return res.status(400).json({message:"Error logging In"});
     }
 }
 
@@ -68,10 +68,14 @@ const signupController = async(req,res) => {
             html: `${verifyTemp}`,
         })
 
-        if(!verifyEmailInfo.response.includes('250')||!verifyEmailInfo.response.includes('OK')){
+        if(!verifyEmailInfo){
+            const deleteUser = await User.findByIdAndDelete(newUser._id);
+            console.log(deleteUser);
             return res.status(401).json({message:"Error Creating User!"});
         }
 
+        console.log(verifyEmailInfo);
+        
         return res.status(201).json({message:"user Created Successfully Please Verify Yourself through Email!"});
 
     } catch (error) {
@@ -96,7 +100,7 @@ const logoutController  = async(req,res) => {
 
 const verifyController = async(req,res)=>{
     try {
-        const {id} = req.params.id;
+        const {id} = req.params;
 
         const userData = await User.findById(id);
 
