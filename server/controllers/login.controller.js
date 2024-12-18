@@ -1,8 +1,8 @@
 import User from "../model/user.model.js";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
-import nodemailer from "nodemailer"
 import transporter from "../utils/nodemailer.util.js";
+import { verificationEmail } from "./emailTemplates/verificationEmail.js";
 
 const loginController = async(req,res) => {
     try{
@@ -41,7 +41,7 @@ const signupController = async(req,res) => {
         const existingUser = await User.findOne({$or:[{userName},{email}]});
 
         if(existingUser){
-            res.status(403).json({message:"User Already Exists"});
+           return res.status(403).json({message:"User Already Exists"});
         }
 
         const hashedPassword = await bcrypt.hash(password,10);
@@ -60,16 +60,15 @@ const signupController = async(req,res) => {
         }
 
         const verifyEmailURL = `http://localhost:3001/authentication/verify/${newUser._id}`;
+        const verifyTemp = verificationEmail(newUser.userName,verifyEmailURL);
         const verifyEmailInfo = await transporter.sendMail({
             from:process.env.EMAIL_FROM,
             to:newUser.emailId,
             subject:'Verification Related Email',
-            html:`<h1>Please Verify Your Account by clicking the Link</h1>
-                    <a href='${verifyEmailURL}'>${verifyEmailURL}</a>
-                `,
+            html: `${verifyTemp}`,
         })
 
-        if(!verifyEmailInfo.response.includes('250')||!info.response.includes('OK')){
+        if(!verifyEmailInfo.response.includes('250')||!verifyEmailInfo.response.includes('OK')){
             return res.status(401).json({message:"Error Creating User!"});
         }
 
