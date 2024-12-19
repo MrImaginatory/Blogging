@@ -37,9 +37,23 @@ This is the backend server for the Blogging application, providing RESTful APIs 
    Create a `.env` file in the `server` directory with the following variables:
 
    ```env
-   PORT=3001
-   MONGODB_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret_key
+   # EXPRESS
+      PORT = 3001
+      
+      # MONGODB
+      MONGO_URI = ""
+      DB_NAME = ""
+      
+      # JSONWEBTOKEN
+      JWT_SECRET_KEY = ""
+      
+      # NODEMAILER
+      EMAIL_FROM = ""
+      EMAIL_HOST = ""
+      EMAIL_PORT = 
+      EMAIL_SECURE = 
+      EMAIL_USER = ""
+      EMAIL_PASS = ""
    ```
 
 5. **Start the server**:
