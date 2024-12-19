@@ -50,59 +50,62 @@ const createBlogController = async(req,res) =>{
     }
 }
 
-const updateBlogController = async(req,res) =>{
+const updateBlogController = async (req, res) => {
     try {
-        const {id} = req.params.id;
-        const {Title,Description} = req.body;
+        const { id } = req.params;
+        const { Title, Description } = req.body;
         const userId = req.user?.userid;
         const isVerified = req.user?.isVerified;
 
-        if(!userId){
-            return res.json(401).json({message:"Unauthorized User"})
+        // Check for unauthorized or unverified user
+        if (!userId) {
+            return res.status(401).json({ message: "Unauthorized User" });
         }
 
-        if(!isVerified){
-            return res.json(401).json({message:"UnVerified User Please Complete Verification First"})
+        if (!isVerified) {
+            return res.status(401).json({ message: "Unverified User, Please Complete Verification First" });
         }
 
-        let filename="";
-        let imagePath="";
-
-        if(req.file){
-            filename=req.file.filename;
-            imagePath=req.file.path; 
+        let updateData = {};
+        if (req.file) {
+            updateData.BlogImage = req.file.filename;
+            updateData.BlogImagePath = req.file.path;
         }
 
-        if(!Title||!Description){
-            return res.status(404).json({message:"Every Field is Required!"});
+        if (!Title || !Description) {
+            return res.status(400).json({ message: "Every Field is Required!" });
         }
 
-        const newBlog = new Blog({
-            BlogTitle:Title,
-            BlogDescription:Description,
-            BlogImage:filename,
-            BlogImagePath:imagePath
-        })
+        // Set title and description in the update object
+        updateData.BlogTitle = Title;
+        updateData.BlogDescription = Description;
 
+        // Find the blog by ID
         const findBlog = await Blog.findById(id);
 
-        if(userId!==findBlog.CreatedBy.toString()){
-            return res.status(401).json({message:"You are Unauthorized to update this Blog"});
+        if (!findBlog) {
+            return res.status(404).json({ message: "Blog Not Found" });
         }
 
-        const updatedBlog = await Blog.findByIdAndUpdate(id,newBlog,{new:true});
-
-        if(!updatedBlog){
-            return res.status(401).json({message:"Failed to update Blog"});
+        // Check if the user is the creator of the blog
+        if (userId !== findBlog.CreatedBy.toString()) {
+            return res.status(403).json({ message: "You are Unauthorized to update this Blog" });
         }
 
-        return res.status(200).json({message:"Blog Updated Successfully"});
+        // Update the blog with the new data
+        const updatedBlog = await Blog.findByIdAndUpdate(id, updateData, { new: true });
+
+        if (!updatedBlog) {
+            return res.status(400).json({ message: "Failed to update Blog" });
+        }
+
+        return res.status(200).json({ message: "Blog Updated Successfully" });
 
     } catch (error) {
-        console.log("Error in Update:",error);
-        return res.status(401).json({message:"Error updating Blog"})
+        console.log("Error in Update:", error);
+        return res.status(500).json({ message: "Error updating Blog" });
     }
-}
+};
 
 const deleteBlogController = async(req,res) =>{
     try {
