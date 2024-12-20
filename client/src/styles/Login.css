@@ -1,4 +1,4 @@
-.Signup-container{
+.Login-container{
     height: 100vh;
     width: 100%;
     background-color: grey;
@@ -6,8 +6,8 @@
     place-items: center;
 }
 
-.Signup-form-container{
-    height: 60ch;
+.Login-form-container{
+    height: 50ch;
     width: 50ch;
     background-color: antiquewhite;
     color: black;
@@ -16,17 +16,17 @@
     justify-content: center;
 }
 
-.Signup-form-container form{
+.Login-form-container form{
     display: flex;
     flex-direction: column;
 }
 
-.Signup-form-container h2{
+.Login-form-container h2{
     margin: 3rem 0 3rem 0;
     text-align: center;
 }
 
-.Signup-form-container input{
+.Login-form-container input{
     height: 5ch;
     width: 45ch;
     border-radius: 5px;
@@ -38,7 +38,7 @@
     border: none;
 }
 
-.Signup-form-container label{
+.Login-form-container label{
     margin-bottom: -10px;
 }
 
@@ -47,7 +47,7 @@
     padding: 0;
 }
 
-.Signup-form-container input[type="submit"]{
+.Login-form-container input[type="submit"]{
     background-color: rgb(92, 94, 94);
     margin: 1rem 0 0.5rem 0;
 } 
@@ -55,14 +55,4 @@
 .loginHref{
     font-size: small;
     padding: 0;
-}
-
-.passwordVisibilityClass{
-    display: inline-flex;
-}
-
-#passwordVisibility{
-    height:10px;
-    margin: 0;
-    display: flex;
 }
