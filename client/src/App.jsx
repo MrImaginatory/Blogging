@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar"
 import Home from "./components/Home"
 import Signup from "./components/Signup"
 import Login from "./components/Login"
+import BlogCard from "./components/BlogCard"
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -15,6 +16,7 @@ const router = createBrowserRouter(
       <Route index element={<Home/>}/>
       <Route path="/login" element={<Login/>}/>
       <Route path="/signup" element={<Signup/>}/>
+      <Route path="/Blogs" element={<BlogCard/>}/>
     </Route>
   )
 )
